@@ -11,4 +11,5 @@ wheels/
 
 # Resin-specific files
 data/
-resin.duckdb
+*.duckdb
+*.duckdb.wal

@@ -45,6 +45,13 @@ def make_url(entity: str, page: int, size: int = 100):
     )
 
 
+def get_total_pages(conn: duckdb.DuckDBPyConnection, table_name: str):
+    total_pages_result = conn.execute(
+        f"SELECT totalPages FROM {table_name} LIMIT 1;"
+    ).fetchone()
+    return total_pages_result[0] if total_pages_result else None
+
+
 def fetch(conn: duckdb.DuckDBPyConnection, entity: str, page: int):
     table_name = f"{entity}_raw"
     conn.execute(f"""
@@ -59,38 +66,48 @@ def fetch(conn: duckdb.DuckDBPyConnection, entity: str, page: int):
         );
     """)
 
+    total_pages = get_total_pages(conn, table_name)
+
     while True:
         current_url = make_url(entity, page)
-        query = f"""
-            BEGIN TRANSACTION;
-            INSERT INTO {table_name} from read_json('{current_url}');
 
-            INSERT INTO tracker (entity, page, status) VALUES ('{entity}', {page}, 'incomplete')
-            ON CONFLICT DO UPDATE set page = {page};
-
-            COMMIT;
-        """
+        if total_pages is not None and page > total_pages:
+            # We reached the last page.
+            conn.execute(
+                "UPDATE tracker SET status = 'complete' WHERE entity = ?", (entity,)
+            )
+            break
 
         try:
-            conn.execute(query).fetchall()
-            print(f"{entity}: Page {page}")
+            conn.execute(f"""
+                BEGIN TRANSACTION;
+
+                INSERT INTO {table_name} from read_json('{current_url}');
+                INSERT INTO tracker
+                    (entity, page, status)
+                VALUES
+                    ('{entity}', {page}, 'incomplete')
+                ON CONFLICT DO UPDATE
+                    set page = {page};
+
+                COMMIT;
+            """).fetchall()
+
+            # Update cache after first successful insert
+            if total_pages is None:
+                total_pages = get_total_pages(conn, table_name)
+
+            print(f"{entity}: Page {page}/{total_pages}")
             page += 1
             time.sleep(0.8)
         except Exception as e:
-            # An explicit rollback is needed before attempting to update
-            # on 404.
+            # An explicit rollback is needed before attempting to retry.
             try:
                 conn.execute("ROLLBACK;")
             except Exception as _e:
                 pass
 
-            if "404" in str(e):
-                conn.execute(
-                    "UPDATE tracker SET status = 'complete' WHERE entity = ?", (entity,)
-                )
-                print(f"Reached end at page {page}")
-                break
-            elif "429" in str(e):
+            if "429" in str(e):
                 print("Rate limit exceeded. Waiting for 5 minutes")
                 time.sleep(300)
             else:
