@@ -1,4 +1,5 @@
 import time
+from datetime import datetime
 from urllib.parse import urlencode, urlunparse
 
 import duckdb
@@ -70,11 +71,17 @@ def fetch(conn: duckdb.DuckDBPyConnection, entity: str, page: int):
 
     while True:
         current_url = make_url(entity, page)
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
         if total_pages is not None and page > total_pages:
             # We reached the last page.
             conn.execute(
-                "UPDATE tracker SET status = 'complete' WHERE entity = ?", (entity,)
+                """
+                UPDATE tracker
+                SET status = 'complete', timestamp = ?
+                WHERE entity = ?
+                """,
+                (timestamp, entity),
             )
             break
 
@@ -84,9 +91,9 @@ def fetch(conn: duckdb.DuckDBPyConnection, entity: str, page: int):
 
                 INSERT INTO {table_name} from read_json('{current_url}');
                 INSERT INTO tracker
-                    (entity, page, status)
+                    (entity, page, status, timestamp)
                 VALUES
-                    ('{entity}', {page}, 'incomplete')
+                    ('{entity}', {page}, 'incomplete', '{timestamp}')
                 ON CONFLICT DO UPDATE
                     set page = {page};
 
@@ -97,7 +104,7 @@ def fetch(conn: duckdb.DuckDBPyConnection, entity: str, page: int):
             if total_pages is None:
                 total_pages = get_total_pages(conn, table_name)
 
-            print(f"{entity}: Page {page}/{total_pages}")
+            print(f"{timestamp} - {entity}: Page {page}/{total_pages}")
             page += 1
             time.sleep(0.8)
         except Exception as e:
@@ -109,6 +116,9 @@ def fetch(conn: duckdb.DuckDBPyConnection, entity: str, page: int):
 
             if "429" in str(e):
                 print("Rate limit exceeded. Waiting for 5 minutes")
+                time.sleep(300)
+            if "503" in str(e):
+                print("Service unavailable. Waiting for 5 minutes")
                 time.sleep(300)
             else:
                 raise e
