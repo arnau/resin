@@ -7,5 +7,7 @@ requires-python = ">=3.12"
 dependencies = [
     "duckdb>=1.4.3",
     "duckdb-engine>=0.17.0",
+    "ipykernel>=7.1.0",
     "sqlalchemy>=2.0.45",
+    "sqlparse>=0.5.4",
 ]
