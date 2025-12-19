@@ -1,6 +1,11 @@
+"""
+Entry point for running the resin package directly.
+Allows running with: python -m resin
+"""
+
 import duckdb
 
-from resin.fetcher import fetch_all_entities, setup_database
+from .fetcher import fetch_all_entities, setup_database
 
 
 def main():
