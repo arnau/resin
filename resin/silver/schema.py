@@ -13,6 +13,7 @@ person = Table(
     Column("given_name", String),
     Column("family_name", String),
     Column("orcid_id", String),
+    schema="silver",
 )
 
 person_link = Table(
@@ -23,6 +24,7 @@ person_link = Table(
     Column("target_id", UUID),
     Column("href", String),
     Column("relation_type", String),
+    schema="silver",
 )
 
 organisation = Table(
@@ -30,6 +32,7 @@ organisation = Table(
     metadata,
     Column("id", UUID),
     Column("name", String),
+    schema="silver",
 )
 
 organisation_link = Table(
@@ -40,4 +43,5 @@ organisation_link = Table(
     Column("target_id", UUID),
     Column("href", String),
     Column("relation_type", String),
+    schema="silver",
 )
