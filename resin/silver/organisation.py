@@ -11,9 +11,11 @@ from resin.silver.schema import organisation, organisation_link
 
 def organisation_raw():
     """Extract raw organisation data from bronze layer."""
-    return select(
-        func.unnest(bronze.organisation.c.organisation).label("organisation"),
-    ).cte("organisation_raw")
+    return (
+        select(func.unnest(bronze.api_page.c.raw_data))
+        .where(bronze.api_page.c.entity == "organisation")
+        .cte("organisation_raw")
+    )
 
 
 def organisation_link_raw():

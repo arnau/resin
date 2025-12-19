@@ -8,8 +8,7 @@ from sqlalchemy.sql import func
 
 from ..metadata import metadata
 
-# Entity tables - each follows the structure from fetcher.py
-fund_raw = Table(
+fund = Table(
     "fund_raw",
     metadata,
     Column("links", pg.ARRAY(JSON)),
@@ -22,7 +21,7 @@ fund_raw = Table(
     schema="bronze",
 )
 
-project_raw = Table(
+project = Table(
     "project_raw",
     metadata,
     Column("links", pg.ARRAY(JSON)),
@@ -35,7 +34,7 @@ project_raw = Table(
     schema="bronze",
 )
 
-person_raw = Table(
+person = Table(
     "person_raw",
     metadata,
     Column("links", pg.ARRAY(JSON)),
@@ -48,7 +47,7 @@ person_raw = Table(
     schema="bronze",
 )
 
-organisation_raw = Table(
+organisation = Table(
     "organisation_raw",
     metadata,
     Column("links", pg.ARRAY(JSON)),
@@ -61,7 +60,7 @@ organisation_raw = Table(
     schema="bronze",
 )
 
-artisticandcreativeproduct_raw = Table(
+artisticandcreativeproduct = Table(
     "artisticandcreativeproduct_raw",
     metadata,
     Column("links", pg.ARRAY(JSON)),
@@ -74,7 +73,7 @@ artisticandcreativeproduct_raw = Table(
     schema="bronze",
 )
 
-collaboration_raw = Table(
+collaboration = Table(
     "collaboration_raw",
     metadata,
     Column("links", pg.ARRAY(JSON)),
@@ -87,7 +86,7 @@ collaboration_raw = Table(
     schema="bronze",
 )
 
-dissemination_raw = Table(
+dissemination = Table(
     "dissemination_raw",
     metadata,
     Column("links", pg.ARRAY(JSON)),
@@ -100,7 +99,7 @@ dissemination_raw = Table(
     schema="bronze",
 )
 
-futherfunding_raw = Table(
+futherfunding = Table(
     "futherfunding_raw",
     metadata,
     Column("links", pg.ARRAY(JSON)),
@@ -113,7 +112,7 @@ futherfunding_raw = Table(
     schema="bronze",
 )
 
-impactsummary_raw = Table(
+impactsummary = Table(
     "impactsummary_raw",
     metadata,
     Column("links", pg.ARRAY(JSON)),
@@ -126,7 +125,7 @@ impactsummary_raw = Table(
     schema="bronze",
 )
 
-intellectualproperty_raw = Table(
+intellectualproperty = Table(
     "intellectualproperty_raw",
     metadata,
     Column("links", pg.ARRAY(JSON)),
@@ -139,7 +138,7 @@ intellectualproperty_raw = Table(
     schema="bronze",
 )
 
-keyfinding_raw = Table(
+keyfinding = Table(
     "keyfinding_raw",
     metadata,
     Column("links", pg.ARRAY(JSON)),
@@ -152,7 +151,7 @@ keyfinding_raw = Table(
     schema="bronze",
 )
 
-policyinfluence_raw = Table(
+policyinfluence = Table(
     "policyinfluence_raw",
     metadata,
     Column("links", pg.ARRAY(JSON)),
@@ -165,7 +164,7 @@ policyinfluence_raw = Table(
     schema="bronze",
 )
 
-product_raw = Table(
+product = Table(
     "product_raw",
     metadata,
     Column("links", pg.ARRAY(JSON)),
@@ -178,7 +177,7 @@ product_raw = Table(
     schema="bronze",
 )
 
-researchdatabaseandmodel_raw = Table(
+researchdatabaseandmodel = Table(
     "researchdatabaseandmodel_raw",
     metadata,
     Column("links", pg.ARRAY(JSON)),
@@ -191,7 +190,7 @@ researchdatabaseandmodel_raw = Table(
     schema="bronze",
 )
 
-researchmaterial_raw = Table(
+researchmaterial = Table(
     "researchmaterial_raw",
     metadata,
     Column("links", pg.ARRAY(JSON)),
@@ -204,7 +203,7 @@ researchmaterial_raw = Table(
     schema="bronze",
 )
 
-softwareandtechnicalproduct_raw = Table(
+softwareandtechnicalproduct = Table(
     "softwareandtechnicalproduct_raw",
     metadata,
     Column("links", pg.ARRAY(JSON)),
@@ -217,7 +216,7 @@ softwareandtechnicalproduct_raw = Table(
     schema="bronze",
 )
 
-spinout_raw = Table(
+spinout = Table(
     "spinout_raw",
     metadata,
     Column("links", pg.ARRAY(JSON)),
@@ -230,7 +229,7 @@ spinout_raw = Table(
     schema="bronze",
 )
 
-publication_raw = Table(
+publication = Table(
     "publication_raw",
     metadata,
     Column("links", pg.ARRAY(JSON)),
@@ -243,7 +242,6 @@ publication_raw = Table(
     schema="bronze",
 )
 
-# Tracker table for managing fetch progress
 tracker = Table(
     "tracker",
     metadata,
@@ -251,5 +249,16 @@ tracker = Table(
     Column("page", Integer),
     Column("status", String),
     Column("timestamp", DateTime, default=func.current_timestamp()),
+    schema="bronze",
+)
+
+api_page = Table(
+    "api_page",
+    metadata,
+    Column("timestamp", DateTime, default=func.current_timestamp()),
+    Column("entity", String, primary_key=True),
+    Column("page", Integer, primary_key=True),
+    Column("total_pages", Integer),
+    Column("raw_data", pg.ARRAY(JSON)),
     schema="bronze",
 )

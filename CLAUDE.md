@@ -46,7 +46,7 @@ resin/
 
 - Main entry point: `python -m resin`
 - Notebook experiments: `notebook.py`
-- Package imports: `from resin import fetch, entity_mapping`
+- Package imports: `from resin import entities, make_url`
 
 ## Code Philosophy
 

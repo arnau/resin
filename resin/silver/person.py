@@ -11,9 +11,11 @@ from resin.silver.schema import person, person_link
 
 def person_raw():
     """Extract raw person data from bronze layer."""
-    return select(
-        func.unnest(bronze.person.c.person).label("person"),
-    ).cte("person_raw")
+    return (
+        select(func.unnest(bronze.api_page.c.raw_data))
+        .where(bronze.api_page.c.entity == "person")
+        .cte("person_raw")
+    )
 
 
 def person_link_raw():
