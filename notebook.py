@@ -1,5 +1,5 @@
 # %% prelude
-import duckdb
+import sqlalchemy
 import sqlparse
 from sqlalchemy import (
     JSON,
@@ -11,20 +11,23 @@ from sqlalchemy import (
     Table,
     create_engine,
     func,
-    literal_column,
     text,
 )
 
-from resin import bronze, silver
+from resin import bronze, metadata, silver
+from resin.database import get_engine
 from resin.sqlalchemy import SqlFormatter, print_sql
 
-conn = duckdb.connect(":memory:")
-conn.execute("""
-    attach 'resin_landing.duckdb' as landing (READ_ONLY);
-    attach 'resin_omega.duckdb' as omega;
-    use omega;
-""")
-metadata = MetaData()
+engine = get_engine(test=True)
+# conn = get_connection(test=True)
+# %% create silver
+with engine.connect() as conn:
+    silver.create_tables(conn)
+
+# %% silver
+with engine.connect() as conn:
+    result = conn.execute(text("DESCRIBE silver.person"))
+    print(f"Silver person: {result.fetchone()}")
 
 
 # %% silver.organisation_address
