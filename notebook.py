@@ -1,4 +1,7 @@
 # %% prelude
+import json
+from datetime import datetime
+
 from sqlalchemy import (
     JSON,
     UUID,
@@ -20,8 +23,9 @@ from resin import bronze, metadata, silver
 from resin.database import get_engine
 from resin.sqlalchemy import SqlFormatter, print_sql
 
-engine = get_engine(test=True)
+engine = get_engine("test")
 
 # %% silver.organisation_address
 # TODO
-print_sql(silver.org_mod.organisation_raw())
+data = {"page": 1, "totalPages": 10, "person": [{"id": 1, "name": "John Doe"}]}
+print_sql(bronze.api_page.entity_insert2("person", json.dumps(data, indent=None)))

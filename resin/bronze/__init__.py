@@ -6,7 +6,7 @@ from sqlalchemy import Connection
 
 from ..metadata import metadata
 from ..sqlalchemy import CreateTableIfNotExists
-from . import schema
+from . import api_page, schema, tracker
 
 
 def create_tables(conn: Connection) -> None:
@@ -19,4 +19,9 @@ def create_tables(conn: Connection) -> None:
         conn.execute(CreateTableIfNotExists(table))
 
 
-__all__ = ["create_tables", "schema"]
+__all__ = [
+    "create_tables",
+    "schema",
+    "api_page",
+    "tracker",
+]

@@ -21,6 +21,8 @@
    - Do not refactor, reorganize, or "improve" code unless asked
    - Do not add type hints, documentation, or other enhancements unless requested
    - Do not split code into multiple files unless specifically asked
+   - Do not add unnecessary blank lines, formatting, or spacing changes
+   - Do not add comments explaining what used to be there or refactoring decisions - only add comments that explain WHY the current code does something
 
 4. **Communication style:**
    - Be direct and concise

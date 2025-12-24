@@ -11,23 +11,23 @@ from sqlalchemy.pool import StaticPool
 _engine = None
 
 
-def get_engine(test: bool = False) -> Engine:
+def get_engine(suffix: str | None = None) -> Engine:
     """Get the configured DuckDB engine with attached databases."""
     global _engine
 
     if _engine is None:
-        _engine = _create_engine(test)
+        _engine = _create_engine(suffix)
 
     return _engine
 
 
-def get_connection(test: bool = False):
+def get_connection(suffix: str | None = None):
     """Get a raw database connection with attached databases."""
-    engine = get_engine(test)
+    engine = get_engine(suffix)
     return engine.raw_connection()
 
 
-def _create_engine(test: bool = False) -> Engine:
+def _create_engine(suffix: str | None = None) -> Engine:
     """Create and configure the DuckDB engine."""
     engine = create_engine(
         "duckdb:///:memory:",
@@ -35,12 +35,10 @@ def _create_engine(test: bool = False) -> Engine:
     )
 
     # Determine database file names
-    if test:
-        bronze_db = "resin_test_bronze.duckdb"
-        silver_db = "resin_test_silver.duckdb"
-    else:
-        bronze_db = "resin_bronze.duckdb"
-        silver_db = "resin_silver.duckdb"
+    bronze_parts = [part for part in ["resin", suffix, "bronze"] if part is not None]
+    silver_parts = [part for part in ["resin", suffix, "silver"] if part is not None]
+    bronze_db = "_".join(bronze_parts) + ".duckdb"
+    silver_db = "_".join(silver_parts) + ".duckdb"
 
     # Attach databases on first connection
     with engine.connect() as conn:
