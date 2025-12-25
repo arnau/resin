@@ -20,12 +20,17 @@ from sqlalchemy import (
 from sqlalchemy.dialects import postgresql as pg
 
 from resin import bronze, metadata, silver
+from resin.api_client import api_entities
 from resin.database import get_engine
 from resin.sqlalchemy import SqlFormatter, print_sql
 
 engine = get_engine("test")
 
-# %% silver.organisation_address
-# TODO
-data = {"page": 1, "totalPages": 10, "person": [{"id": 1, "name": "John Doe"}]}
-print_sql(bronze.api_page.entity_insert2("person", json.dumps(data, indent=None)))
+# %%
+#
+
+
+print_sql(silver.fund_link_select())
+# %%
+#
+print_sql(bronze.api_entity_insert(api_entities))

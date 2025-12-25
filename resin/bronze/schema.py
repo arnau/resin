@@ -28,3 +28,11 @@ api_page = Table(
     Column("raw_data", pg.ARRAY(JSON)),
     schema="bronze",
 )
+
+api_entity = Table(
+    "api_entity",
+    metadata,
+    Column("name", String, primary_key=True),
+    Column("api_path", String, nullable=False),
+    schema="bronze",
+)

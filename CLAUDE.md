@@ -24,7 +24,14 @@
    - Do not add unnecessary blank lines, formatting, or spacing changes
    - Do not add comments explaining what used to be there or refactoring decisions - only add comments that explain WHY the current code does something
 
-4. **Communication style:**
+4. **Precision and honesty:**
+   - Be precise and accurate in all answers
+   - If you don't know something, be honest about it rather than guessing
+   - Don't provide vague or imprecise information when specific details exist
+   - For complex systems, admit uncertainty rather than pretending to know
+   - Don't make assumptions or fill gaps with speculation
+
+5. **Communication style:**
    - Be direct and concise
    - Don't apologize excessively for unexpected results
    - Don't offer unsolicited advice or improvements

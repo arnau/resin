@@ -2,9 +2,20 @@
 Schema definitions for the silver layer where data is cleaned and normalised.
 """
 
-from sqlalchemy import Column, String, Table, Uuid
+from sqlalchemy import TIMESTAMP, BigInteger, Column, String, Table, Uuid
 
 from ..metadata import metadata
+
+link = Table(
+    "link",
+    metadata,
+    Column("source_id", Uuid(as_uuid=True)),
+    Column("source_entity", Uuid(as_uuid=True)),
+    Column("target_id", Uuid(as_uuid=True)),
+    Column("target_entity", String),
+    Column("relation_type", String),
+    schema="silver",
+)
 
 person = Table(
     "person",
@@ -44,4 +55,37 @@ organisation_link = Table(
     Column("href", String),
     Column("relation_type", String),
     schema="silver",
+)
+
+
+organisation_address = Table(
+    "organisation_address",
+    metadata,
+    Column("organisation_id", Uuid(as_uuid=True)),
+    Column("id", Uuid(as_uuid=True)),
+    Column("line1", String),
+    Column("line2", String),
+    Column("line3", String),
+    Column("line4", String),
+    Column("line5", String),
+    Column("city", String),
+    Column("county", String),
+    Column("post_code", String),
+    Column("region", String),
+    Column("country", String),
+    Column("type", String),
+    schema="silver",
+)
+
+fund = Table(
+    "fund",
+    metadata,
+    Column("id", Uuid(as_uuid=True)),
+    Column("start_date", TIMESTAMP(timezone=True)),
+    Column("end_date", TIMESTAMP(timezone=True)),
+    Column("amount", BigInteger),
+    Column("currency_code", String),
+    Column("category", String),
+    schema="silver",
+    # catalog="silver",
 )
