@@ -10,6 +10,7 @@ from sqlfmt.api import Mode, format_string
 class SqlFormatter(Enum):
     SqlParse = "sqlparse"
     SqlFmt = "sqlfmt"
+    Nil = "nil"
 
 
 def print_sql(stmt: ClauseElement, options: Optional[Dict[str, Any]] = None) -> None:
@@ -26,7 +27,7 @@ def print_sql(stmt: ClauseElement, options: Optional[Dict[str, Any]] = None) -> 
         case SqlFormatter.SqlFmt:
             res = fmt_sqlfmt(query)
         case _:
-            res = fmt_sqlparse(query)
+            res = query
 
     print(res)
 

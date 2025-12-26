@@ -31,3 +31,6 @@ engine = get_engine("test")
 
 
 print_sql(silver.link.link_select())
+
+# %%
+print_sql(bronze.api_entity.insert(api_entities), {"formatter": SqlFormatter.Nil})
