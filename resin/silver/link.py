@@ -63,23 +63,27 @@ def _fieldset():
 
 
 def extract_api_path(url: ColumnElement[str]):
-    return fn.regexp_extract(url, "http://gtr.ukri.org/gtr/api/(.+)/", 1)
+    return fn.regexp_extract(url, "http://gtr.ukri.org/gtr/api//?(.+)/", 1)
 
 
 def _link():
     """Transform fund links into final format."""
     fieldset = _fieldset()
 
-    return select(
-        fieldset.c.source_id,
-        fieldset.c.source_entity,
-        fn.cast(
-            path_extract(fieldset.c.href, -1),
-            Uuid,
-        ).label("target_id"),
-        entity_name(extract_api_path(fieldset.c.href)).label("target_entity"),
-        fieldset.c.rel.label("relation_type"),
-    ).cte("link")
+    return (
+        select(
+            fieldset.c.source_id,
+            fieldset.c.source_entity,
+            fn.cast(
+                path_extract(fieldset.c.href, -1),
+                Uuid,
+            ).label("target_id"),
+            entity_name(extract_api_path(fieldset.c.href)).label("target_entity"),
+            fieldset.c.rel.label("relation_type"),
+        )
+        .where(fieldset.c.rel != "ORCID_ID")
+        .cte("link")
+    )
 
 
 def select_all():
