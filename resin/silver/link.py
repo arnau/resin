@@ -5,80 +5,86 @@ The way the API expresses links means that most links are to be duplicated given
 be expressed in terms of both entities being the source entity.
 """
 
-from sqlalchemy import JSON, UUID, ColumnElement, Insert, func, select
-from sqlalchemy.dialects import postgresql as pg
-
 from resin.bronze import schema as bronze
 from resin.bronze.api_entity import entity_name
-from resin.sqlalchemy import json_extract_as, path_extract
+from resin.sql import (
+    ColumnElement,
+    JsonArray,
+    Uuid,
+    fn,
+    json_extract_as,
+    path_extract,
+    select,
+)
 
 from .schema import link
 
 
-def raw():
+def _raw():
     """Extract raw data from bronze layer."""
     return select(
         bronze.api_page.c.entity,
-        func.unnest(bronze.api_page.c.raw_data).label("raw_data"),
+        fn.unnest(bronze.api_page.c.raw_data).label("raw_data"),
     ).cte("raw")
 
 
-def link_raw():
+def _link_raw():
     """Extract and unnest links."""
-    raw_ = raw()
-    raw_data = raw_.c.raw_data
+    raw = _raw()
+    raw_data = raw.c.raw_data
 
     return (
         select(
-            json_extract_as(raw_data, "$.id", UUID).label("source_id"),
-            raw_.c.entity.label("source_entity"),
-            func.unnest(
-                json_extract_as(raw_data, "$.links.link", pg.ARRAY(JSON)),
+            json_extract_as(raw_data, "$.id", Uuid).label("source_id"),
+            raw.c.entity.label("source_entity"),
+            fn.unnest(
+                json_extract_as(raw_data, "$.links.link", JsonArray),
             ).label("link"),
         )
-        .select_from(raw_)
+        .select_from(raw)
         .cte("link_raw")
     )
 
 
-def link_fieldset():
+def _fieldset():
     """Select specific fields from links."""
-    link_raw_ = link_raw()
+    link_raw = _link_raw()
 
     return (
         select(
-            link_raw_.c.source_id,
-            link_raw_.c.source_entity,
-            func.json_extract_string(link_raw_.c.link, "$.href").label("href"),
-            func.json_extract_string(link_raw_.c.link, "$.rel").label("rel"),
+            link_raw.c.source_id,
+            link_raw.c.source_entity,
+            fn.json_extract_string(link_raw.c.link, "$.href").label("href"),
+            fn.json_extract_string(link_raw.c.link, "$.rel").label("rel"),
         )
-        .select_from(link_raw_)
-        .cte("link_fieldset")
+        .select_from(link_raw)
+        .cte("fieldset")
     )
 
 
 def extract_api_path(url: ColumnElement[str]):
-    return func.regexp_extract(url, "http://gtr.ukri.org/gtr/api/(.+)/", 1)
+    return fn.regexp_extract(url, "http://gtr.ukri.org/gtr/api/(.+)/", 1)
 
 
-def link_select():
+def _link():
     """Transform fund links into final format."""
-    link_fieldset_ = link_fieldset()
+    fieldset = _fieldset()
 
-    link = select(
-        link_fieldset_.c.source_id,
-        link_fieldset_.c.source_entity,
-        func.cast(
-            path_extract(link_fieldset_.c.href, -1),
-            UUID,
+    return select(
+        fieldset.c.source_id,
+        fieldset.c.source_entity,
+        fn.cast(
+            path_extract(fieldset.c.href, -1),
+            Uuid,
         ).label("target_id"),
-        entity_name(extract_api_path(link_fieldset_.c.href)).label("target_entity"),
-        link_fieldset_.c.rel.label("relation_type"),
+        entity_name(extract_api_path(fieldset.c.href)).label("target_entity"),
+        fieldset.c.rel.label("relation_type"),
     ).cte("link")
 
-    return select(link)
+
+def select_all():
+    return select(_link())
 
 
-def link_insert() -> Insert:
-    """Insert statement from link selection."""
-    return link.insert().from_select(list(link.columns), link_select())
+def insert_all():
+    return link.insert().from_select(list(link.columns), _link())

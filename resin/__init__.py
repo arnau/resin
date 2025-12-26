@@ -2,13 +2,22 @@
 Resin: A package for fetching and processing GTR API data.
 """
 
-from . import bronze, silver
+from . import (
+    api_client,
+    bronze,
+    commands,
+    database,
+    silver,
+    sql,
+)
 from .metadata import metadata
-from .sqlalchemy import CreateTableAs
 
 __all__ = [
-    "metadata",
-    "CreateTableAs",
+    "api_client",
     "bronze",
+    "commands",
+    "database",
+    "metadata",
     "silver",
+    "sql",
 ]

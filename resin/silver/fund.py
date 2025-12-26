@@ -6,7 +6,7 @@ from sqlalchemy import UUID, BigInteger, Insert, String, func, select
 
 from resin.bronze import schema as bronze
 from resin.silver.schema import fund
-from resin.sqlalchemy import json_extract_as, json_extract_timestamp
+from resin.sql import json_extract_as, json_extract_timestamp
 
 
 def fund_raw():

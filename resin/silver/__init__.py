@@ -5,20 +5,16 @@ Silver layer transformations for the resin package.
 from sqlalchemy import Connection
 
 from ..metadata import metadata
-from ..sqlalchemy import CreateTableIfNotExists
+from ..sql import CreateTableIfNotExists
 from . import (
+    fund,
     link,
     organisation,
+    organisation_address,
     person,
+    project,
     schema,
 )
-from .fund import fund_insert, fund_select
-from .organisation import organisation_insert, organisation_select
-from .organisation_address import (
-    organisation_address_insert,
-    organisation_address_select,
-)
-from .person import person_insert, person_select
 
 
 def create_tables(conn: Connection) -> None:
@@ -33,16 +29,11 @@ def create_tables(conn: Connection) -> None:
 
 __all__ = [
     "create_tables",
+    "fund",
     "organisation",
-    "organisation_select",
-    "organisation_insert",
+    "organisation_address",
     "person",
-    "person_select",
-    "person_insert",
-    "organisation_address_select",
-    "organisation_address_insert",
-    "fund_select",
-    "fund_insert",
     "link",
+    "project",
     "schema",
 ]

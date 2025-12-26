@@ -112,7 +112,7 @@ class FetchManager:
 def setup_database(conn: Connection, entities: EntitySet):
     """Initialize the database with necessary tables and configurations."""
     create_tables(conn)
-    conn.execute(api_entity.insert(entities))
+    conn.execute(api_entity.insert_all(entities))
 
 
 def fetch_all_entities(conn: Connection, entities: EntitySet, api_client: ApiClient):

@@ -5,17 +5,20 @@ in plural form and as a sub-resource for outcome entities.
 This is a helper for normalising entities at query time, particularly when dealing with links.
 """
 
-from sqlalchemy import ColumnElement, select
-
 from resin.api_client import EntitySet
 
+from ..sql import (
+    ColumnElement,
+    insert,
+    select,
+)
 from .schema import api_entity
 
 
-def insert(entities: EntitySet):
+def insert_all(entities: EntitySet):
     """Insert query for API entity definitions."""
     values = [{"name": entity.name, "api_path": entity.api_path} for entity in entities]
-    return api_entity.insert().values(values)
+    return insert(api_entity).values(values).on_conflict_do_nothing()
 
 
 def entity_name(api_path: ColumnElement[str]):

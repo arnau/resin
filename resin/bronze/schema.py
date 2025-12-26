@@ -2,11 +2,16 @@
 The bronze layer reflects the raw data from the GTR API.
 """
 
-from sqlalchemy import JSON, Column, DateTime, Integer, String, Table
-from sqlalchemy.dialects import postgresql as pg
-from sqlalchemy.sql import func
-
 from ..metadata import metadata
+from ..sql import (
+    Column,
+    DateTime,
+    Integer,
+    JsonArray,
+    String,
+    Table,
+    fn,
+)
 
 tracker = Table(
     "tracker",
@@ -15,17 +20,17 @@ tracker = Table(
     Column("page", Integer),
     Column("status", String),
     Column("total_pages", Integer),
-    Column("timestamp", DateTime, default=func.current_timestamp()),
+    Column("timestamp", DateTime, default=fn.current_timestamp()),
     schema="bronze",
 )
 
 api_page = Table(
     "api_page",
     metadata,
-    Column("timestamp", DateTime, default=func.current_timestamp()),
+    Column("timestamp", DateTime, default=fn.current_timestamp()),
     Column("entity", String, primary_key=True),
     Column("page", Integer, primary_key=True),
-    Column("raw_data", pg.ARRAY(JSON)),
+    Column("raw_data", JsonArray),
     schema="bronze",
 )
 
