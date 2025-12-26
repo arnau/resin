@@ -30,7 +30,4 @@ engine = get_engine("test")
 #
 
 
-print_sql(silver.fund_link_select())
-# %%
-#
-print_sql(bronze.api_entity_insert(api_entities))
+print_sql(silver.link.link_select())
