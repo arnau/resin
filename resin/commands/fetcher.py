@@ -5,7 +5,7 @@ from datetime import datetime
 from sqlalchemy import Connection
 
 from resin.api_client import ApiClient, Entity, EntitySet, api_entities
-from resin.bronze import api_entity_insert, api_page, create_tables, tracker
+from resin.bronze import api_entity, api_page, create_tables, tracker
 from resin.database.engine import get_engine
 
 # Configuration constants
@@ -109,9 +109,10 @@ class FetchManager:
                 break
 
 
-def setup_database(conn: Connection):
+def setup_database(conn: Connection, entities: EntitySet):
     """Initialize the database with necessary tables and configurations."""
     create_tables(conn)
+    conn.execute(api_entity.insert(entities))
 
 
 def fetch_all_entities(conn: Connection, entities: EntitySet, api_client: ApiClient):
@@ -139,8 +140,7 @@ def main(suffix: str | None = None):
 
     try:
         with engine.connect() as conn:
-            setup_database(conn)
-            conn.execute(api_entity_insert(api_entities))
+            setup_database(conn, api_entities)
             fetch_all_entities(conn, api_entities, api_client)
     finally:
         api_client.close()
