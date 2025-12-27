@@ -26,11 +26,12 @@ class ProgressTracker:
     def is_last_page(self, entity: str, page: int) -> bool:
         """Check if we've reached the last page for an entity."""
         total_pages = self.get_total_pages(entity)
-        return total_pages is not None and page > total_pages
+        return total_pages is not None and page >= total_pages
 
     def mark_complete(self, entity: str, timestamp: datetime) -> None:
         """Mark an entity as complete."""
         self.conn.execute(tracker.entity_complete(entity, timestamp))
+        self.conn.commit()
 
     def update_progress(
         self, entity: str, page: int, total_pages: int | None = None
