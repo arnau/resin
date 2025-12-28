@@ -2,41 +2,41 @@
 Person transformation queries for the silver layer.
 """
 
-from sqlalchemy import UUID, Insert, String, func, select
-
 from resin.bronze import schema as bronze
 from resin.silver.schema import person
+from resin.sql import Insert, Uuid, fn, json_extract_as, select
 
 
-def person_raw():
+def _raw():
     """Extract raw person data from bronze layer."""
     return (
-        select(func.unnest(bronze.api_page.c.raw_data))
+        select(fn.unnest(bronze.api_page.c.raw_data))
         .where(bronze.api_page.c.entity == "person")
-        .cte("person_raw")
+        .cte("raw")
     )
 
 
-def person_select():
+def _fieldset():
     """Transform raw person data into final format."""
-    person_raw_cte = person_raw()
+    raw = _raw()
 
-    return select(
-        func.cast(func.json_extract_string(person_raw_cte.c.value, "$.id"), UUID).label(
-            "id"
-        ),
-        func.cast(
-            func.json_extract_string(person_raw_cte.c.value, "$.firstName"), String
-        ).label("given_name"),
-        func.cast(
-            func.json_extract_string(person_raw_cte.c.value, "$.surname"), String
-        ).label("family_name"),
-        func.cast(
-            func.json_extract_string(person_raw_cte.c.value, "$.orcidId"), String
-        ).label("orcid_id"),
-    ).select_from(person_raw_cte)
+    return (
+        select(
+            json_extract_as(raw.c.value, "$.id", Uuid).label("id"),
+            fn.json_extract_string(raw.c.value, "$.firstName").label("given_name"),
+            fn.json_extract_string(raw.c.value, "$.surname").label("family_name"),
+            fn.json_extract_string(raw.c.value, "$.orcidId").label("orcid_id"),
+        )
+        .select_from(raw)
+        .cte("fieldset")
+    )
+
+
+def select_all():
+    """Select all person records."""
+    return select(_fieldset())
 
 
 def person_insert() -> Insert:
     """Insert statement for person table."""
-    return person.insert().from_select(list(person.columns), person_select())
+    return person.insert().from_select(list(person.columns), _fieldset())

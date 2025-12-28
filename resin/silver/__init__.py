@@ -7,13 +7,27 @@ from sqlalchemy import Connection
 from ..metadata import metadata
 from ..sql import CreateTableIfNotExists
 from . import (
+    artistic_and_creative_product,
+    collaboration,
+    dissemination,
     fund,
+    further_funding,
+    impact_summary,
+    intellectual_property,
+    key_finding,
     link,
     organisation,
     organisation_address,
     person,
+    policy_influence,
+    product,
     project,
+    publication,
+    research_database_and_model,
+    research_material,
     schema,
+    software_and_technical_product,
+    spinout,
 )
 
 
@@ -28,12 +42,26 @@ def create_tables(conn: Connection) -> None:
 
 
 __all__ = [
+    "artistic_and_creative_product",
+    "collaboration",
     "create_tables",
+    "dissemination",
     "fund",
+    "further_funding",
+    "impact_summary",
+    "intellectual_property",
+    "key_finding",
+    "link",
     "organisation",
     "organisation_address",
     "person",
-    "link",
+    "policy_influence",
+    "product",
     "project",
+    "publication",
+    "research_database_and_model",
+    "research_material",
     "schema",
+    "software_and_technical_product",
+    "spinout",
 ]

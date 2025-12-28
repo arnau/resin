@@ -4,7 +4,9 @@ Schema definitions for the silver layer where data is cleaned and normalised.
 
 from ..metadata import metadata
 from ..sql import (
+    Array,
     BigInteger,
+    Boolean,
     Column,
     DateTime,
     String,
@@ -120,3 +122,248 @@ project = Table(
 # project_topic (raw_data->'researchTopics'->'researchTopic')
 # project_programme (raw_data->'rcukProgrammes'->'rcukProgramme')
 # project_participant (raw_data->'participantValues'->'participant')
+
+
+### Outcomes ###
+
+collaboration = Table(
+    "collaboration",
+    metadata,
+    Column("id", Uuid(as_uuid=True)),
+    Column("outcome_id", String),
+    Column("title", String),  # All seem to be null
+    Column("description", String),
+    Column("parent_organisation", String),
+    Column("child_organisation", String),
+    Column("principal_investigator_contribution", String),
+    Column("partner_contribution", String),
+    Column("start_date", DateTime),
+    Column("end_date", DateTime),  # All seem to be null
+    Column("sector", String),
+    Column("country", String),
+    Column("impact", String),
+    Column("supporting_url", String),
+)
+
+
+artistic_and_creative_product = Table(
+    "artistic_and_creative_product",
+    metadata,
+    Column("id", Uuid(as_uuid=True)),
+    Column("outcome_id", String),
+    Column("title", String),
+    Column("description", String),
+    Column("type", String),
+    Column("impact", String),
+    Column("year_first_provided", String),
+    Column("supporting_url", String),
+)
+
+dissemination = Table(
+    "dissemination",
+    metadata,
+    Column("id", Uuid(as_uuid=True)),
+    Column("outcome_id", String),
+    Column("title", String),  # All seem to be null
+    Column("description", String),
+    Column("form", String),
+    Column("primary_audience", String),
+    Column("years_of_dissemination", Array(String)),
+    # Column("results", String),  # All seem to be null
+    Column("impact", String),
+    Column("presentation_type", String),
+    Column("geographic_reach", String),
+    Column("part_of_official_scheme", Boolean),
+    Column("supporting_url", String),
+)
+
+further_funding = Table(
+    "further_funding",
+    metadata,
+    Column("id", Uuid(as_uuid=True)),
+    Column("outcome_id", String),
+    Column("title", String),  # All seem to be null
+    Column("description", String),
+    # Column("narrative", String), # All seem to be null
+    Column("amount", BigInteger),
+    Column("currency_code", String),
+    Column("organisation", String),
+    Column("department", String),
+    Column("funding_id", String),
+    Column("start_date", DateTime),
+    Column("end_date", DateTime),
+    Column("sector", String),
+    Column("country", String),
+)
+
+impact_summary = Table(
+    "impact_summary",
+    metadata,
+    Column("id", Uuid(as_uuid=True)),
+    Column("outcome_id", String),
+    Column("title", String),  # All seem to be null
+    Column("description", String),
+    Column("impact_types", Array(String)),
+    # Column("summary", String), # All seem to be null
+    # Column("beneficiaries", String), # All seem to be null
+    # Column("contribution_method", String), # All seem to be null
+    Column("sector", String),
+    Column("first_year_of_impact", String),
+)
+
+intellectual_property = Table(
+    "intellectual_property",
+    metadata,
+    Column("id", Uuid(as_uuid=True)),
+    Column("outcome_id", String),
+    Column("title", String),  # All seem to be null
+    Column("description", String),
+    Column("protection", String),
+    Column("patent_id", String),
+    Column("year_protection_granted", String),
+    # Column("type", String),  # All seem to be null
+    Column("impact", String),
+    Column("licensed", String),
+    # Column("patent_url", String),  # All seem to be null
+    # Column("start_date", DateTime), # All seem to be null
+    # Column("end_date", DateTime), # All seem to be null
+)
+
+key_finding = Table(
+    "key_finding",
+    metadata,
+    Column("id", Uuid(as_uuid=True)),
+    Column("outcome_id", String),
+    Column("description", String),
+    # Column("non_academic_uses", String), # All seem to be null
+    Column("exploitation_pathways", String),
+    Column("sectors", Array(String)),
+    Column("supporting_url", String),
+)
+
+policy_influence = Table(
+    "policy_influence",
+    metadata,
+    Column("id", Uuid(as_uuid=True)),
+    Column("outcome_id", String),
+    Column("influence", String),
+    Column("type", String),
+    Column("guideline_title", String),
+    Column("impact", String),
+    # Column("methods", String), # All seem to be null
+    # Column("areas", Array(String)), # All seem to be null
+    Column("geographic_reach", String),
+    Column("supporting_url", String),
+)
+
+product = Table(
+    "product",
+    metadata,
+    Column("id", Uuid(as_uuid=True)),
+    Column("outcome_id", String),
+    Column("title", String),
+    Column("description", String),
+    Column("type", String),
+    Column("stage", String),
+    Column("clinical_trial", String),
+    Column("ukcrn_isctn_id", String),
+    Column("year_development_completed", String),
+    Column("impact", String),
+    Column("supporting_url", String),
+)
+
+
+research_database_and_model = Table(
+    "research_database_and_model",
+    metadata,
+    Column("id", Uuid(as_uuid=True)),
+    Column("outcome_id", String),
+    Column("title", String),
+    Column("description", String),
+    Column("type", String),
+    Column("impact", String),
+    Column("provided_to_others", Boolean),
+    Column("year_first_provided", String),
+    Column("supporting_url", String),
+)
+
+research_material = Table(
+    "research_material",
+    metadata,
+    Column("id", Uuid(as_uuid=True)),
+    Column("outcome_id", String),
+    Column("title", String),
+    Column("description", String),
+    Column("type", String),
+    Column("impact", String),
+    # Column("software_developed", String), # All seem to be null
+    # Column("software_open_sourced", String), # All seem to be null
+    Column("provided_to_others", Boolean),
+    Column("year_first_provided", String),
+    Column("supporting_url", String),
+)
+
+software_and_technical_product = Table(
+    "software_and_technical_product",
+    metadata,
+    Column("id", Uuid(as_uuid=True)),
+    Column("outcome_id", String),
+    Column("title", String),
+    Column("description", String),
+    Column("type", String),
+    Column("impact", String),
+    Column("software_open_sourced", Boolean),
+    # Column("open_source_license", String),  # All seem to be null
+    Column("year_first_provided", String),
+    Column("supporting_url", String),
+)
+
+spinout = Table(
+    "spinout",
+    metadata,
+    Column("id", Uuid(as_uuid=True)),
+    Column("outcome_id", String),
+    Column("description", String),
+    Column("company_name", String),
+    # Column("company_description", String), # All seem to be null
+    Column("impact", String),
+    Column("website", String),
+    Column("registration_number", String),  # All seem to be null
+    Column("year_established", String),
+    # Column("ip_exploited", String), # All seem to be null
+    # Column("joint_venture", String), # All seem to be null
+)
+
+
+publication = Table(
+    "publication",
+    metadata,
+    Column("id", Uuid(as_uuid=True)),
+    Column("outcome_id", String),
+    Column("title", String),
+    Column("type", String),
+    # Column("abstract", String), # All seem to be null
+    # Column("other_information", String), # All seem to be null
+    Column("journal_title", String),
+    Column("date_published", DateTime),
+    Column("publication_url", String),
+    Column("pub_med_id", String),
+    Column("isbn", String),
+    Column("issn", String),
+    # Column("series_number", String), # All seem to be null
+    # Column("series_title", String), # All seem to be null
+    # Column("sub_title", String), # All seem to be null
+    Column("volume_title", String),
+    Column("doi", String),
+    # Column("volume_number", String), # All seem to be null
+    Column("issue", String),
+    # Column("total_pages", String), # All seem to be null
+    Column("edition", String),
+    # Column("chapter_number", String), # All seem to be null
+    Column("chapter_title", String),
+    Column("page_reference", String),
+    # Column("conference_event", String), # All seem to be null
+    # Column("conference_location", String), # All seem to be null
+    # Column("conference_number", String), # All seem to be null
+    Column("author", String),
+)
