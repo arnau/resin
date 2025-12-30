@@ -112,6 +112,7 @@ project = Table(
     Column("potential_impact", String),
     Column("start_date", DateTime),
     Column("end_date", DateTime),
+    schema="silver",
 )
 
 # TODO:
@@ -143,6 +144,7 @@ collaboration = Table(
     Column("country", String),
     Column("impact", String),
     Column("supporting_url", String),
+    schema="silver",
 )
 
 
@@ -157,6 +159,7 @@ artistic_and_creative_product = Table(
     Column("impact", String),
     Column("year_first_provided", String),
     Column("supporting_url", String),
+    schema="silver",
 )
 
 dissemination = Table(
@@ -175,6 +178,7 @@ dissemination = Table(
     Column("geographic_reach", String),
     Column("part_of_official_scheme", Boolean),
     Column("supporting_url", String),
+    schema="silver",
 )
 
 further_funding = Table(
@@ -194,6 +198,7 @@ further_funding = Table(
     Column("end_date", DateTime),
     Column("sector", String),
     Column("country", String),
+    schema="silver",
 )
 
 impact_summary = Table(
@@ -209,6 +214,7 @@ impact_summary = Table(
     # Column("contribution_method", String), # All seem to be null
     Column("sector", String),
     Column("first_year_of_impact", String),
+    schema="silver",
 )
 
 intellectual_property = Table(
@@ -227,6 +233,7 @@ intellectual_property = Table(
     # Column("patent_url", String),  # All seem to be null
     # Column("start_date", DateTime), # All seem to be null
     # Column("end_date", DateTime), # All seem to be null
+    schema="silver",
 )
 
 key_finding = Table(
@@ -239,6 +246,7 @@ key_finding = Table(
     Column("exploitation_pathways", String),
     Column("sectors", Array(String)),
     Column("supporting_url", String),
+    schema="silver",
 )
 
 policy_influence = Table(
@@ -254,6 +262,7 @@ policy_influence = Table(
     # Column("areas", Array(String)), # All seem to be null
     Column("geographic_reach", String),
     Column("supporting_url", String),
+    schema="silver",
 )
 
 product = Table(
@@ -270,6 +279,7 @@ product = Table(
     Column("year_development_completed", String),
     Column("impact", String),
     Column("supporting_url", String),
+    schema="silver",
 )
 
 
@@ -285,6 +295,7 @@ research_database_and_model = Table(
     Column("provided_to_others", Boolean),
     Column("year_first_provided", String),
     Column("supporting_url", String),
+    schema="silver",
 )
 
 research_material = Table(
@@ -301,6 +312,7 @@ research_material = Table(
     Column("provided_to_others", Boolean),
     Column("year_first_provided", String),
     Column("supporting_url", String),
+    schema="silver",
 )
 
 software_and_technical_product = Table(
@@ -316,6 +328,7 @@ software_and_technical_product = Table(
     # Column("open_source_license", String),  # All seem to be null
     Column("year_first_provided", String),
     Column("supporting_url", String),
+    schema="silver",
 )
 
 spinout = Table(
@@ -332,6 +345,7 @@ spinout = Table(
     Column("year_established", String),
     # Column("ip_exploited", String), # All seem to be null
     # Column("joint_venture", String), # All seem to be null
+    schema="silver",
 )
 
 
@@ -366,4 +380,5 @@ publication = Table(
     # Column("conference_location", String), # All seem to be null
     # Column("conference_number", String), # All seem to be null
     Column("author", String),
+    schema="silver",
 )
