@@ -23,6 +23,9 @@
    - Do not split code into multiple files unless specifically asked
    - Do not add unnecessary blank lines, formatting, or spacing changes
    - Do not add comments explaining what used to be there or refactoring decisions - only add comments that explain WHY the current code does something
+   - Always check diagnostics before considering work complete - fix type errors, linting issues, etc.
+   - When editing multiple similar files, maintain consistent patterns - don't change conventions in one file without changing all similar files
+   - When adding imports, verify the import chain won't create circular dependencies before writing the code
 
 4. **Precision and honesty:**
    - Be precise and accurate in all answers

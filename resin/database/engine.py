@@ -5,7 +5,10 @@ Database engine configuration for the resin package.
 import atexit
 
 from sqlalchemy import Engine, create_engine, text
+from sqlalchemy.exc import OperationalError
 from sqlalchemy.pool import StaticPool
+
+from resin.database.exceptions import DatabaseLockError
 
 # Global engine instance
 _engine = None
@@ -41,14 +44,21 @@ def _create_engine(suffix: str | None = None) -> Engine:
     silver_db = "_".join(silver_parts) + ".duckdb"
 
     # Attach databases on first connection
-    with engine.connect() as conn:
-        conn.execute(
-            text(f"""
-            attach '{bronze_db}' as bronze;
-            attach '{silver_db}' as silver;
-        """)
-        )
-        conn.commit()
+    try:
+        with engine.connect() as conn:
+            conn.execute(
+                text(f"""
+                attach '{bronze_db}' as bronze;
+                attach '{silver_db}' as silver;
+            """)
+            )
+            conn.commit()
+    except OperationalError as e:
+        if "Could not set lock on file" in str(e):
+            raise DatabaseLockError(
+                "Database is locked by another process. Close other connections and try again."
+            ) from e
+        raise
 
     return engine
 

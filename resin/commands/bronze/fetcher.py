@@ -1,5 +1,6 @@
 import json
 import time
+from collections.abc import Generator
 from datetime import datetime
 
 from sqlalchemy import Connection
@@ -44,12 +45,12 @@ class ProgressTracker:
         result = self.conn.execute(tracker.entity_status(entity)).fetchone()
         return tuple(result) if result else None
 
-    def log_progress(
+    def format_progress(
         self, entity: str, page: int, total_pages: int | None, timestamp: datetime
-    ) -> None:
-        """Log progress information."""
+    ) -> str:
+        """Format progress information."""
         timestamp_str = timestamp.strftime("%Y-%m-%d %H:%M:%S")
-        print(f"{timestamp_str} - {entity}: Page {page}/{total_pages}")
+        return f"{timestamp_str} - {entity}: Page {page}/{total_pages}"
 
 
 class FetchManager:
@@ -81,7 +82,7 @@ class FetchManager:
 
             self.progress.update_progress(self.entity.name, page, total_pages)
 
-    def fetch_entity(self, start_page: int) -> None:
+    def fetch_entity(self, start_page: int) -> Generator[str, None, None]:
         """Fetch all pages for the entity starting from start_page."""
         page = start_page
         total_pages = self.progress.get_total_pages(self.entity.name)
@@ -99,24 +100,26 @@ class FetchManager:
                 if total_pages is None:
                     total_pages = self.progress.get_total_pages(self.entity.name)
 
-                self.progress.log_progress(
+                yield self.progress.format_progress(
                     self.entity.name, page, total_pages, timestamp
                 )
                 page += 1
                 time.sleep(RATE_LIMIT_DELAY)
 
             except Exception as e:
-                print(f"Failed to fetch {self.entity.name} page {page}: {e}")
+                yield f"Failed to fetch {self.entity.name} page {page}: {e}"
                 break
 
 
-def setup_database(conn: Connection, entities: EntitySet):
+def setup_database(conn: Connection, entities: EntitySet) -> None:
     """Initialize the database with necessary tables and configurations."""
     create_tables(conn)
     conn.execute(api_entity.insert_all(entities))
 
 
-def fetch_all_entities(conn: Connection, entities: EntitySet, api_client: ApiClient):
+def fetch_all_entities(
+    conn: Connection, entities: EntitySet, api_client: ApiClient
+) -> Generator[str, None, None]:
     progress = ProgressTracker(conn)
 
     for entity in sorted(entities, key=lambda e: e.name):
@@ -124,28 +127,24 @@ def fetch_all_entities(conn: Connection, entities: EntitySet, api_client: ApiCli
         status = progress.get_entity_status(entity.name)
 
         if status is None:
-            fetch_manager.fetch_entity(1)
+            yield from fetch_manager.fetch_entity(1)
         else:
             page, status_value = status
             if status_value == "incomplete":
-                fetch_manager.fetch_entity(page + 1)
+                yield from fetch_manager.fetch_entity(page + 1)
             elif status_value == "complete":
-                print(f"No more work for {entity.name}.")
+                yield f"No more work for {entity.name}."
             else:
-                print(f"Skipping {entity.name} due to unknown status")
+                yield f"Skipping {entity.name} due to unknown status"
 
 
-def main(suffix: str | None = None):
+def main(suffix: str | None = None) -> Generator[str, None, None]:
     engine = get_engine(suffix)
     api_client = ApiClient()
 
     try:
         with engine.connect() as conn:
             setup_database(conn, api_entities)
-            fetch_all_entities(conn, api_entities, api_client)
+            yield from fetch_all_entities(conn, api_entities, api_client)
     finally:
         api_client.close()
-
-
-if __name__ == "__main__":
-    main()

@@ -683,8 +683,9 @@ wheels = [
 [[package]]
 name = "resin"
 version = "0.1.0"
-source = { virtual = "." }
+source = { editable = "." }
 dependencies = [
+    { name = "click" },
     { name = "duckdb" },
     { name = "duckdb-engine" },
     { name = "ipykernel" },
@@ -696,6 +697,7 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
+    { name = "click", specifier = ">=8.1.8" },
     { name = "duckdb", specifier = ">=1.4.3" },
     { name = "duckdb-engine", specifier = ">=0.17.0" },
     { name = "ipykernel", specifier = ">=7.1.0" },
