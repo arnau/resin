@@ -18,7 +18,7 @@ link = Table(
     "link",
     metadata,
     Column("source_id", Uuid(as_uuid=True)),
-    Column("source_entity", Uuid(as_uuid=True)),
+    Column("source_entity", String),
     Column("target_id", Uuid(as_uuid=True)),
     Column("target_entity", String),
     Column("relation_type", String),
@@ -35,17 +35,6 @@ person = Table(
     schema="silver",
 )
 
-person_link = Table(
-    "person_link",
-    metadata,
-    Column("source_id", Uuid(as_uuid=True)),
-    Column("target_entity", String),
-    Column("target_id", Uuid(as_uuid=True)),
-    Column("href", String),
-    Column("relation_type", String),
-    schema="silver",
-)
-
 organisation = Table(
     "organisation",
     metadata,
@@ -53,18 +42,6 @@ organisation = Table(
     Column("name", String),
     schema="silver",
 )
-
-organisation_link = Table(
-    "organisation_link",
-    metadata,
-    Column("source_id", Uuid(as_uuid=True)),
-    Column("target_entity", String),
-    Column("target_id", Uuid(as_uuid=True)),
-    Column("href", String),
-    Column("relation_type", String),
-    schema="silver",
-)
-
 
 organisation_address = Table(
     "organisation_address",

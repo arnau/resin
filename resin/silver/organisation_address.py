@@ -22,7 +22,7 @@ def _raw():
             ).label("address"),
         )
         .select_from(raw)
-        .cte("raw")
+        .cte("address_raw")
     )
 
 

@@ -52,6 +52,6 @@ def select_all():
     return select(_fieldset())
 
 
-def fund_insert() -> Insert:
+def insert_all() -> Insert:
     """Insert statement for fund table."""
     return fund.insert().from_select(list(fund.columns), _fieldset())
