@@ -26,7 +26,7 @@ from sqlalchemy.sql.type_api import TypeEngine
 
 from .create_table_as import CreateTableAs
 from .create_table_if_not_exists import CreateTableIfNotExists
-from .printer import SqlFormatter, print_sql
+from .printer import SqlFormatter, format_sql, print_sql
 
 
 def json_extract_as(
@@ -72,6 +72,7 @@ __all__ = [
     "list_trim",
     # Debugging helpers
     "print_sql",
+    "format_sql",
     "SqlFormatter",
     # sqlalchemy re-exports
     "select",

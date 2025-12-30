@@ -12,4 +12,4 @@ engine = get_engine("test")
 # TODO: check links lookup for orcid_id. they should be filtered out. maybe others as well
 
 
-print_sql(silver.publication.select_all())
+print_sql(silver.link.select_all())

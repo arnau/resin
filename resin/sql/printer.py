@@ -13,7 +13,7 @@ class SqlFormatter(Enum):
     Nil = "nil"
 
 
-def print_sql(stmt: ClauseElement, options: Optional[Dict[str, Any]] = None) -> None:
+def format_sql(stmt: ClauseElement, options: Optional[Dict[str, Any]] = None) -> str:
     if options is None:
         options = {}
 
@@ -29,7 +29,11 @@ def print_sql(stmt: ClauseElement, options: Optional[Dict[str, Any]] = None) -> 
         case _:
             res = query
 
-    print(res)
+    return str(res)
+
+
+def print_sql(stmt: ClauseElement, options: Optional[Dict[str, Any]] = None) -> None:
+    print(format_sql(stmt, options))
 
 
 def fmt_sqlparse(query: Compiled) -> str:
